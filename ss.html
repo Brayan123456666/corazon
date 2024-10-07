@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flores Amarillas &lt;3</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inclusive Sans', sans-serif;
+            background: linear-gradient(70deg, blue, purple, pink);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 100px;
+        }
+
+        .Con-2 {
+            display: none;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .Contenedor {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .Con {
+            display: flex;
+            place-content: center;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .Texto {
+            display: none;
+        }
+
+        .Texto h2 {
+            font-size: 50px;
+        }
+
+        #B12 {
+            margin-left: 30px;
+        }
+
+        .Button {
+            font-family: monospace;
+            font-size: x-large;
+            transition-duration: 0.2s;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: greenyellow; 
+            color: black; 
+            border: 2px solid green;
+            cursor: pointer;
+        }
+        
+        .Button:hover {
+            transform: scale(1.1);
+            border-radius: 14px;
+            box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+            color: black;
+            background-color: white;
+        }
+
+        .Contenedor-Binicio {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .Con-Emergente {
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+        }
+
+        .cua {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border: 2px solid greenyellow;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: aparecer 0.5s ease-out;
+        }
+
+        @keyframes aparecer {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateX(-50%) translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @media (max-width: 468px) {
+            body {
+                background: linear-gradient(100deg, blue, purple, pink);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="Contenedor-Binicio">
+        <button class="Button" id="BVer"> Clicka aquí </button>
+    </div>
+
+    <div class="Con-Emergente">
+        <div id="resultado" class="cua">
+            <p id="res">
+                Hola, antes de iniciar, solo quiero recordarte que eres 
+                muy especial para mí y gracias por todo. &lt;3
+            </p>    
+            <button id="BotonCerrar" class="Button">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="Con-2">
+        <h1 id="Titulo">Para la niña más linda del mundo Anette <3</h1>
+    </div>
+
+    <main class="Contenedor">
+        <canvas id="Flor" class="Flor" width="800" height="600"></canvas>
+
+        <div class="Texto">
+            <h2 id="Text">Para la niña más linda del mundo Anette <3.</h2>
+        </div>
+    </main>
+
+    <script>
+        const canvas = document.getElementById("Flor");
+        const ctx = canvas.getContext("2d");
+
+        function DibujarPetalo(x, y, RadioX, RadioY, Angulo, Color, Alpha) {
+            ctx.beginPath();
+            ctx.ellipse(x, y, RadioX, RadioY, Angulo, 0, Math.PI * 2);
+            ctx.fillStyle = Color;
+            ctx.globalAlpha = Alpha / 100;
+            ctx.fill();
+            ctx.globalAlpha = 1; // Restablecer opacidad
+        }
+
+        function DibujarFlorSinTallo(x, y, NumeroPetalos, RadioXPetalo, RadioYPetalo, AltoTrazo) {
+            const PasosTallo = 50;
+            const AltoTallo = AltoTrazo / PasosTallo;
+            let NuevaY = y; // Aquí se mantiene la posición Y para el tallo
+
+            // Dibuja el tallo con animación
+            const DibujarTallo = () => {
+                if (NuevaY < y + AltoTrazo) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y); // La posición inicial del tallo
+                    ctx.lineTo(x, NuevaY);
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = 'black';
+                    ctx.stroke();
+                    NuevaY += AltoTallo;
+                    requestAnimationFrame(DibujarTallo); // Usar requestAnimationFrame para una animación más fluida
+                } else {
+                    // Dibuja los pétalos después de que el tallo se haya dibujado
+                    const AnguloIncrement = (Math.PI * 2) / NumeroPetalos;
+                    let contadorPetalos = 0;
+
+                    function dibujarSiguientePetalo() {
+                        if (contadorPetalos < NumeroPetalos) {
+                            const Angulo = contadorPetalos * AnguloIncrement;
+                            // Dibuja el pétalo usando la posición Y del tallo más un offset para que esté por encima
+                            DibujarPetalo(x, NuevaY - AltoTrazo, RadioXPetalo, RadioYPetalo, Angulo, 'yellow', 100);
+                            contadorPetalos++;
+                            setTimeout(dibujarSiguientePetalo, 300); // Tiempo de espera para cada pétalo
+                        } else {
+                            // Dibuja el centro de la flor
+                            ctx.beginPath();
+                            ctx.arc(x, NuevaY - AltoTrazo, 10, 0, Math.PI * 2);
+                            ctx.fillStyle = 'white';
+                            ctx.fill();
+                        }
+                    }
+                    dibujarSiguientePetalo();
+                }
+            };
+            DibujarTallo();
+        }
+
+        function CrearVarias() {
+            const numFlores = 5; // Cambiado a 5 flores
+            const espacioX = canvas.width / 3;
+            const espacioY = canvas.height / 3;
+            const TamañoFlor = 130;
+
+            for (let i = 0; i < numFlores; i++) {
+                const fila = Math.floor(i / 3);
+                const columna = i % 3;
+                const x = espacioX * columna + espacioX / 2;
+                const y = espacioY * fila + espacioY / 2 + 50; // Ajuste para que el tallo esté debajo de la flor
+
+                DibujarFlorSinTallo(x, y, 8, 30, 60, TamañoFlor);
+            }
+        }
+
+        document.getElementById("BVer").addEventListener('click', function() {
+            document.getElementById("resultado").style.display = "block";
+        });
+
+        document.getElementById("BotonCerrar").addEventListener('click', function() {
+            document.getElementById("resultado").style.display = "none";
+            document.querySelector(".Contenedor-Binicio").style.display = "none";
+            document.querySelector(".Con-2").style.display = "block";
+            CrearVarias(); // Dibuja las flores al cerrar la ventana emergente
+        });
+    </script>
+
+</body>
+</html>
